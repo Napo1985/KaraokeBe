@@ -1,0 +1,49 @@
+spring:
+  application:
+    name: karaoke-be
+  
+  # Cache configuration (Caffeine cache for now, can be changed later)
+  cache:
+    type: caffeine
+    caffeine:
+      spec: maximumSize=1000,expireAfterWrite=10m
+  
+  # JPA configuration (for future DB usage)
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+
+# Server configuration
+server:
+  port: 8080
+  servlet:
+    context-path: /api
+
+# SpringDoc OpenAPI (Swagger) configuration
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    enabled: true
+    operationsSorter: method
+    tagsSorter: alpha
+
+# Application specific configuration
+app:
+  name: Karaoke Backend API
+  version: 1.0.0
+
+# Logging configuration
+logging:
+  level:
+    root: INFO
+    com.karaoke: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
