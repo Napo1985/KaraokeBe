@@ -8,15 +8,22 @@ spring:
     caffeine:
       spec: maximumSize=1000,expireAfterWrite=10m
   
-  # JPA configuration (for future DB usage)
+  # JPA configuration
   jpa:
     hibernate:
-      ddl-auto: none
+      ddl-auto: update
     show-sql: false
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: true
+  
+  # Database configuration (PostgreSQL for production, H2 for development)
+  datasource:
+    url: ${DATABASE_URL:jdbc:h2:mem:karaokedb}
+    username: ${DATABASE_USERNAME:sa}
+    password: ${DATABASE_PASSWORD:}
+    driver-class-name: ${DATABASE_DRIVER:org.h2.Driver}
 
 # Server configuration
 server:
@@ -38,6 +45,30 @@ springdoc:
 app:
   name: Karaoke Backend API
   version: 1.0.0
+  
+  # External tools configuration
+  tools:
+    yt-dlp-path: ${YT_DLP_PATH:yt-dlp}
+    ffmpeg-path: ${FFMPEG_PATH:ffmpeg}
+    python-path: ${PYTHON_PATH:python}
+  
+  # Storage configuration
+  storage:
+    temp-dir: ${TEMP_DIR:./temp}
+    output-dir: ${OUTPUT_DIR:./output}
+    retention-hours: ${RETENTION_HOURS:24}
+  
+  # Lyrics API configuration
+  lyrics:
+    genius-api-key: ${GENIUS_API_KEY:}
+    musixmatch-api-key: ${MUSIXMATCH_API_KEY:}
+  
+  # Speech-to-text configuration
+  speech-to-text:
+    provider: ${SPEECH_TO_TEXT_PROVIDER:openai} # openai, google, aws
+    openai-api-key: ${OPENAI_API_KEY:}
+    google-credentials-path: ${GOOGLE_CREDENTIALS_PATH:}
+    aws-region: ${AWS_REGION:}
 
 # Logging configuration
 logging:
