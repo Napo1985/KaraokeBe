@@ -47,7 +47,7 @@ class KaraokeControllerIT {
         request.setIncludeBackgroundVocals(false);
         request.setVocalsVolume(0.3);
 
-        mockMvc.perform(post("/api/karaoke/generate")
+        mockMvc.perform(post("/karaoke/generate")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isAccepted())
@@ -72,7 +72,7 @@ class KaraokeControllerIT {
                 .build();
         job = jobRepository.save(job);
 
-        mockMvc.perform(get("/api/karaoke/jobs/" + job.getId()))
+        mockMvc.perform(get("/karaoke/jobs/" + job.getId()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(job.getId()))
                 .andExpect(jsonPath("$.status").value("PROCESSING"))
@@ -81,7 +81,7 @@ class KaraokeControllerIT {
 
     @Test
     void getJobStatus_ShouldReturnNotFoundForNonExistentJob() throws Exception {
-        mockMvc.perform(get("/api/karaoke/jobs/999"))
-                .andExpect(status().isInternalServerError());
+        mockMvc.perform(get("/karaoke/jobs/999"))
+                .andExpect(status().isNotFound());
     }
 }

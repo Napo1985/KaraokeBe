@@ -22,7 +22,7 @@ class HealthControllerIT {
 
     @Test
     void testHealthEndpointIntegration() throws Exception {
-        mockMvc.perform(get("/api/health"))
+        mockMvc.perform(get("/health"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status").value("UP"))
                 .andExpect(jsonPath("$.service").value("Karaoke Backend API"))
