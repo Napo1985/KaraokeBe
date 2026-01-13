@@ -89,7 +89,7 @@ public class KaraokeController {
     private KaraokeJobResponse mapToResponse(KaraokeJob job) {
         String downloadUrl = null;
         if (job.getStatus() == com.karaoke.model.dto.JobStatus.COMPLETED && job.getOutputVideoPath() != null) {
-            downloadUrl = "/api/karaoke/jobs/" + job.getId() + "/download";
+            downloadUrl = "/karaoke/jobs/" + job.getId() + "/download";
         }
         
         return KaraokeJobResponse.builder()

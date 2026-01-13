@@ -11,6 +11,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
@@ -20,6 +21,7 @@ import java.util.Collections;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.doNothing;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -52,8 +54,9 @@ class KaraokeControllerTest {
                 .build();
 
         when(karaokeService.createJob(any(GenerateKaraokeRequest.class))).thenReturn(job);
+        doNothing().when(karaokeService).processJob(any(Long.class));
 
-        mockMvc.perform(post("/api/karaoke/generate")
+        mockMvc.perform(post("/karaoke/generate")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isAccepted())
@@ -68,7 +71,7 @@ class KaraokeControllerTest {
         request.setIncludeBackgroundVocals(false);
         request.setVocalsVolume(0.3);
 
-        mockMvc.perform(post("/api/karaoke/generate")
+        mockMvc.perform(post("/karaoke/generate")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isBadRequest());
@@ -87,7 +90,7 @@ class KaraokeControllerTest {
 
         when(karaokeService.getJob(1L)).thenReturn(job);
 
-        mockMvc.perform(get("/api/karaoke/jobs/1"))
+        mockMvc.perform(get("/karaoke/jobs/1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(1L))
                 .andExpect(jsonPath("$.status").value("PROCESSING"))
@@ -101,14 +104,16 @@ class KaraokeControllerTest {
                 .status(JobStatus.COMPLETED)
                 .youtubeUrl("https://www.youtube.com/watch?v=test123")
                 .progress(100)
+                .errorMessage(null)
+                .outputVideoPath("path/to/video.mp4")
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
                 .build();
 
-        Page<KaraokeJob> page = new PageImpl<>(Collections.singletonList(job));
+        Page<KaraokeJob> page = new PageImpl<>(Collections.singletonList(job), PageRequest.of(0, 1), 1L);
         when(karaokeService.getAllJobs(any(Pageable.class))).thenReturn(page);
 
-        mockMvc.perform(get("/api/karaoke/jobs"))
+        mockMvc.perform(get("/karaoke/jobs"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content[0].id").value(1L))
                 .andExpect(jsonPath("$.content[0].status").value("COMPLETED"));
